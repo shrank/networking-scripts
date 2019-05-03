@@ -1,0 +1,18 @@
+- hosts: cisco
+  gather_facts: False
+  connection: network_cli
+
+  tasks:
+  - name: wr mem
+    ios_command:
+      commands:
+         - wr mem
+  - name: backup running config
+    block:
+      - ios_command:
+          commands: 
+            - sh run
+        register: output
+      - local_action: copy content='{{output.stdout[0]}}' dest="{{backup_dir}}/{{ inventory_hostname }}.conf"
+
+

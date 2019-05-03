@@ -1,0 +1,16 @@
+- hosts: netonix
+  gather_facts: False
+  connection: local
+
+  tasks:
+  - name: get mac table
+    block:
+     - netonix_command:
+         username: "{{ ansible_user}}"
+         password: "{{ ansible_password}}"
+         target: "{{ inventory_hostname }}"
+         command:  mac
+       register: output
+     - copy: 
+         content='{{output.output | find_ap(inventory_hostname,'/data/dhcp_leases.rsc') }}' 
+         dest="{{output_dir}}/{{ inventory_hostname }}.mac"

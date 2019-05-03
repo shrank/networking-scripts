@@ -1,0 +1,8 @@
+[cisco]
+
+[netonix]
+
+[switches:children]
+netonix
+cisco
+

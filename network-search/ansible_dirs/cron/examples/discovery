@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# discover new divices for group netonix
+sh /data/scripts/find_devices.sh netonix 10.0.1.0-255
+
+# discover new divices for group cisco
+sh /data/scripts/find_devices.sh cisco 10.0.2.0-255

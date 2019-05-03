@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# update status data for group wlc
+sh /data/scripts/status.sh "-l wlc"

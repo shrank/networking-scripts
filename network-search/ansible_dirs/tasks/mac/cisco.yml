@@ -1,0 +1,14 @@
+- hosts: cisco
+  gather_facts: False
+  connection: network_cli
+
+  tasks:
+  - name: get mac table
+    block:
+     - ios_command:
+         commands: 
+           - sh mac address
+       register: output
+     - local_action: copy content='{{output.stdout[0] | cisco_mac2dict | find_ap(inventory_hostname,'/data/dhcp_leases.rsc') }}' dest="{{output_dir}}/{{ inventory_hostname }}.mac"
+
+

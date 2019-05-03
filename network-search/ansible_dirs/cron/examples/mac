@@ -1,0 +1,3 @@
+#!/bin/sh
+# search known mac addresses on all devices
+sh /data/scripts/mac.sh

@@ -1,0 +1,3 @@
+#!/bin/sh
+# backup all devices
+sh /data/scripts/backup.sh

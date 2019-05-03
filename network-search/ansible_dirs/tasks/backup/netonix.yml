@@ -1,0 +1,18 @@
+- hosts: netonix
+  gather_facts: False
+  connection: local
+
+  tasks:
+  - name: backup running config
+    block:
+      - netonix_command:
+          username: "{{ ansible_user}}"
+          password: "{{ ansible_password}}"
+          target: "{{ inventory_hostname }}"
+          command: config
+        register: output
+      -  copy: 
+          content='{{output.config | to_nice_json(indent=4)}}' 
+          dest="{{backup_dir}}/{{ inventory_hostname }}.conf"
+
+

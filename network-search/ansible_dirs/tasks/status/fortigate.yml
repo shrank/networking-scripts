@@ -1,0 +1,24 @@
+- hosts: wlc
+  gather_facts: False
+  connection: network_cli
+
+  tasks:
+  - name: ap
+    block:
+      - cli_command:
+          command: sh ap
+        register: output
+      - local_action: copy content='{{output.stdout}}' dest="{{status_dir}}/{{ inventory_hostname }}.ap.status"
+  - name: ssid
+    block:
+      - cli_command:
+          command: sh ess-ap
+        register: output
+      - local_action: copy content='{{output.stdout}}' dest="{{status_dir}}/{{ inventory_hostname }}.ess-ap.status"
+  - name: radio
+    block:
+      - cli_command:
+          command: show interfaces Dot11Radio statistics
+        register: output
+      - local_action: copy content='{{output.stdout}}' dest="{{status_dir}}/{{ inventory_hostname }}.radio.status"
+

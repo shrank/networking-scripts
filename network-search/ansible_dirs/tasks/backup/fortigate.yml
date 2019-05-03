@@ -1,0 +1,12 @@
+- hosts: wlc
+  gather_facts: False
+  connection: network_cli
+
+  tasks:
+  - name: backup running config
+    cli_command:
+      command: sh running-config
+    register: output
+  - local_action: copy content='{{output.stdout}}' dest="{{backup_dir}}/{{ inventory_hostname }}.conf"
+
+

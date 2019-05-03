@@ -1,0 +1,30 @@
+- hosts: netonix
+  gather_facts: False
+  connection: network_cli
+
+  tasks:
+  - name: stp status
+    block:
+      - cli_command:
+          command: sh stp
+        register: output
+      - local_action: copy content='{{output.stdout}}' dest="{{status_dir}}/{{ inventory_hostname }}.stp.status"
+  - name: int status
+    block:
+      - cli_command:
+          command: sh int status
+        register: output
+      - local_action: copy content='{{output.stdout}}' dest="{{status_dir}}/{{ inventory_hostname }}.int.status"
+  - name: int statistics
+    block:
+      - cli_command:
+          command: sh int statistics
+        register: output
+      - local_action: copy content='{{output.stdout}}' dest="{{status_dir}}/{{ inventory_hostname }}.counter.status"
+  - name: vlans
+    block:
+      - cli_command:
+          command: sh vlan
+        register: output
+      - local_action: copy content='{{output.stdout}}' dest="{{status_dir}}/{{ inventory_hostname }}.vlan.status"
+
