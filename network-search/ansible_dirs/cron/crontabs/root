@@ -7,6 +7,6 @@
 15	18	*	*	*	run-parts /data/cron/daily_evening
 15	12	*	*	*	run-parts /data/cron/daily_noon
 0	2	*	*	*	run-parts /data/cron/daily_overnigt
-0	3	*	*	6	run-parts /data/weekly_overnight
-0	5	1	*	*	run-parts /data/monthly_overnight
+0	3	*	*	6	run-parts /data/cron/weekly_overnight
+0	5	1	*	*	run-parts /data/cron/monthly_overnight
 
