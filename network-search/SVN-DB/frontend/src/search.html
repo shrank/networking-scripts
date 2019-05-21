@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+
+  <title></title>
+  <meta name="description" content=""/>
+  <meta name="author" content="salathe" />
+
+  <!-- mobile viewport optimisation -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- stylesheets -->
+  <link rel="stylesheet" href="css/default.css" type="text/css"/>
+
+  <!--[if lte IE 7]>
+  <link rel="stylesheet" href="css/yaml/iehacks.min.css" type="text/css"/>
+  <![endif]-->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/search.js"></script>
+</head>
+<body>
+<ul class="ym-skiplinks">
+	<li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
+	<li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
+</ul>
+
+<header>
+<nav id="nav">
+	<div class="ym-wrapper">
+ 		<div class="ym-hlist">
+			<ul>
+			</ul>
+			<h1>Network Search</h1>
+		</div>
+	</div>
+</nav>
+</header>
+<main>
+    <div class="ym-column">
+      <div class="ym-col3">
+        <div class="ym-cbox">
+         <div class="search">
+			  <form class="searchform"  action="#" onsubmit="return startSearch(this);" >
+			    <div class="ym-fbox-wrap ym-grid">
+				  <div class="ym-g80 ym-gl">
+      			<div class="ym-gbox-left">
+					  <input class="searchfield" type="search" name="q" placeholder="Search..." />
+					</div>
+				  </div>
+				  <div class="ym-g20 ym-gr">
+      			<div class="ym-gbox-right">
+					 <input class="searchbutton" type="submit" value="Search" />
+				   </div>
+				  </div>
+				</div>
+			  Collections:
+			  <div class="ym-fbox-wrap" id="filter_collections">
+			  </div>
+			</form>
+        </div>
+      </div>
+        <div class="ym-cbox" id="main-content">
+        <p>result</p>
+      </div>
+    </div>
+</main>
+<footer>
+	<div class="ym-wrapper">
+		<div class="ym-wbox">
+			<p>© Company 2012 &ndash; Layout based on <a href="http://www.yaml.de">YAML</a></p>
+		</div>
+	</div>
+</footer>
+
+<!-- full skip link functionality in webkit browsers -->
+<script src="css/yaml/core/js/yaml-focusfix.js"></script>
+</body>
+</html>
