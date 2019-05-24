@@ -8,6 +8,7 @@ ext/yaml412-130728.zip:
 	wget -O $@ ${yaml_url}
 
 ext/yaml: ext/yaml412-130728.zip
+	mkdir $@
 	unzip $< -d $@
 src/css/yaml: ext/yaml
 	cp -r $</yaml412-130728/yaml $@

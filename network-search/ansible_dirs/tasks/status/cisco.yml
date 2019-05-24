@@ -8,36 +8,13 @@
      - ios_command:
          commands: 
            - sh spann
+           - sh int status
+           - sh int counters errors
+           - sh cdp neighbor
        register: output
      - local_action: copy content='{{output.stdout[0]}}' dest="{{status_dir}}/{{ inventory_hostname }}.stp.status"
-  - name: int status 
-    block:
-      - ios_command:
-          commands: 
-            - sh int status
-        register: output
-      - local_action: copy content='{{output.stdout[0]}}' dest="{{status_dir}}/{{ inventory_hostname }}.int.status"
-  - name: int statistics 
-    block:
-      - ios_command:
-          commands: 
-            - sh int counters errors
-        register: output
-      - local_action: copy content='{{output.stdout[0]}}' dest="{{status_dir}}/{{ inventory_hostname }}.counter.status"
-
-  - name: int trunk
-    block:
-      - ios_command:
-          commands: 
-            - sh int trunk
-        register: output
-      - local_action: copy content='{{output.stdout[0]}}' dest="{{status_dir}}/{{ inventory_hostname }}.trunk.status"
-  - name: cdp
-    block:
-      - ios_command:
-          commands:
-            - sh cdp neighbor
-        register: output
-      - local_action: copy content='{{output.stdout[0]}}' dest="{{status_dir}}/{{ inventory_hostname }}.cdp.status"
+     - local_action: copy content='{{output.stdout[1]}}' dest="{{status_dir}}/{{ inventory_hostname }}.int.status"
+     - local_action: copy content='{{output.stdout[2]}}' dest="{{status_dir}}/{{ inventory_hostname }}.counter.status"
+     - local_action: copy content='{{output.stdout[3]}}' dest="{{status_dir}}/{{ inventory_hostname }}.cdp.status"
 
 

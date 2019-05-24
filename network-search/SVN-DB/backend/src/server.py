@@ -1,41 +1,44 @@
-from flask import Flask, request, Response
-from flask_restful import Resource, Api
-from flask_restful import reqparse
+from starlette.applications import Starlette
+from starlette.responses import JSONResponse, PlainTextResponse
 import SVN
 import os
 import json
 
-app = Flask(__name__)
-api = Api(app)
+
+svnDB = Starlette(debug=False)
+
+@svnDB.route('/')
+async def homepage(request):
+    return JSONResponse({'hello': 'world'})
 
 
-class DataStore(Resource):
-	def get(self,collection,object_id):
-		result={}
-		result=backend.getFile(collection,object_id)
-		return Response(result, mimetype='text/plain')
-class Collections(Resource):
-	def get(self):
-		result={}
-		result=backend.getCollections()
-		return result
+@svnDB.route('/store/{collection}/{object_id}')
+async def getObject(request):
+	object_id = request.path_params['object_id']
+	collection = request.path_params['collection']
+	result=backend.getFile(collection,object_id)
+	return PlainTextResponse(result)
 
-class Search(Resource):
-	def get(self):
-		result={}
-		parser = reqparse.RequestParser()
-		parser.add_argument('q')
-		parser.add_argument('c')
-		args = parser.parse_args()
-		result=backend.search(args['q'],args["c"])
-		return result
+@svnDB.route('/store/')
+async	def getCollections(request):
+	a=backend.getCollections()
+	return JSONResponse(a)
 
-backend=SVN.SVNBackend("testdir/workdir","testdir/repo")
+@svnDB.route('/search/')
+async def search(request):
+	result={}
+	args={}
+	args['q'] = request.query_params['q']
+	try:
+		args['c'] = request.query_params['c']
+	except:
+		args['c']=None
+	result=backend.search(args['q'],args["c"])
+	return JSONResponse(result)
 
-api.add_resource(Collections, '/store/')
-api.add_resource(DataStore, '/store/<collection>/<object_id>')
-api.add_resource(Search, '/search/')
+backend=SVN.SVNBackend("/srv/workdir",os.environ['SVNREPO'])
 
 
 if __name__ == '__main__':
-     app.run(port='5002')
+	import uvicorn
+	uvicorn.run(svnDB, host='0.0.0.0', port=8000)

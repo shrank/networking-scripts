@@ -16,7 +16,7 @@ function showFile(content)
 
 function openFile(path)
 {
-	$.get("http://127.0.0.1/api/store/"+path,"",showFile,"text");
+	$.get("/api/store/"+path,"",showFile,"text");
 	$('#main-content').html("");
 	f=$("<h1></h1>");
 	f.text(path);

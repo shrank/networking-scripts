@@ -36,7 +36,7 @@ function searchCollection(collection,filters)
 	col.append($("<h2></h2>").text(collection));
 	col.append($("<div class='spinner'></div>"));
 	col.appendTo('#main-content');
-	$.getJSON("http://127.0.0.1/api/search/",query,setCollectionResult);
+	$.getJSON("/api/search/",query,setCollectionResult);
 	return false;
 }
 
@@ -54,7 +54,7 @@ function startSearch(form)
 
 function loadCollections()
 {
-	$.getJSON("http://127.0.0.1/api/store/","",function (result)
+	$.getJSON("/api/store/","",function (result)
 	{
 		$("#filter_collections").html("");
 		$.each( result, function( i, item ) {

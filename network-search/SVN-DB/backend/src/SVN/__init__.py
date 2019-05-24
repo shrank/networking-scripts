@@ -1,7 +1,7 @@
 import os
 import shutil
 import subprocess
-from queue import SimpleQueue
+from queue import Queue
 import re
 
 class SVNBackend():
@@ -10,14 +10,16 @@ class SVNBackend():
 		self.workdir=os.path.abspath(workdir)
 		self.repo=os.path.abspath(repo)
 		self._createRepo()
-		self.workers=SimpleQueue()
+		self.workers=Queue()
 		for i in range(self.num_workdirs):
 			self.freeWorkdir(SVNWorkdir(os.path.join(self.workdir,"wd%d"%i),self.repo))
 	def _createRepo(self):
 		if(os.path.isdir(self.repo)):
-			ret=subprocess.run(["svnadmin", "info",self.repo],capture_output=True)
+			ret=subprocess.run(["svnadmin", "info",self.repo],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
 			if(ret.returncode==0):
 				return
+			else:
+				raise Exception("unable to open repository: %s\n%s"%self.repo,ret.stderr.decode("utf8"))
 		try:
 			os.makedirs(self.repo)
 		except FileExistsError:
@@ -93,7 +95,7 @@ class SVNWorkdir():
 			pass
 		if(os.path.isdir(self.workdir)):
 			shutil.rmtree(self.workdir, ignore_errors=True)
-		ret=subprocess.run(["svn", "checkout","--depth","empty",self.repo,self.workdir], capture_output=True)
+		ret=subprocess.run(["svn", "checkout","--depth","empty",self.repo,self.workdir], stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
 		if(ret.returncode!=0):
 			raise Exception("unable to checkout repo:"+ret.stderr.decode("utf8"))
 	def cleanup(self):
@@ -104,7 +106,7 @@ class SVNWorkdir():
 	def getFileInfo(self,fp):
 		res={}
 		f=fp.name
-		ret=subprocess.run(["svn","info","--show-item","last-changed-date",f],cwd=self.workdir,capture_output=True)
+		ret=subprocess.run(["svn","info","--show-item","last-changed-date",f],cwd=self.workdir,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		if(ret.returncode!=0):
 			raise Exception("Error getting file info:"+ret.stderr.decode("utf8"))
 		res["changed"]=ret.stdout.decode("utf8").strip(" \n\r\t")
@@ -133,12 +135,12 @@ class SVNWorkdir():
 			ret=subprocess.run(["svn","add","--parents",f],cwd=self.workdir)
 			if(ret.returncode!=0):
 				raise Exception("Error adding file:%s"%f)
-		ret=subprocess.run(["svn","commit","--non-interactive" ,"-m","autocommit",os.path.dirname(f)],cwd=self.workdir,capture_output=True)
+		ret=subprocess.run(["svn","commit","--non-interactive" ,"-m","autocommit",os.path.dirname(f)],cwd=self.workdir,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
 		if(ret.returncode!=0):
 			raise Exception("Error commiting file:"+ret.stderr.decode("utf8"))
 	def loadCollections(self):
 		res=[]
-		ret=subprocess.run(["svn","update","--set-depth","immediates","."],cwd=self.workdir,capture_output=True)
+		ret=subprocess.run(["svn","update","--set-depth","immediates","."],cwd=self.workdir,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
 		if(ret.returncode!=0):
 			raise Exception("Unable to load collections:"+ret.stderr.decode("utf8"))
 		dirs = os.listdir( self.workdir )
@@ -154,7 +156,7 @@ class SVNWorkdir():
 		shutil.rmtree(os.path.join(self.workdir,collection), ignore_errors=True)
 	def loadObjects(self,collection):
 		res=[]
-		ret=subprocess.run(["svn","update","--parents","--set-depth","files",collection],cwd=self.workdir)
+		ret=subprocess.run(["svn","update","--parents","--set-depth","files",collection],cwd=self.workdir,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 		if(ret.returncode!=0):
 			raise Exception("Unable to load objects for collection: %s"%collection)
 		if(collection not in self.cache):
