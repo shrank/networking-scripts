@@ -30,6 +30,8 @@ Checkout the discovery script in /data/cron/examples.
  - to run your scripts automatically, place them in a subdirectory of /data/cron/
    - check /data/cron/examples
  - the mac filters assume a very specific environment. Checkout the source-code for more details
-
+ - the SVN structure must be ./directory/file to be searchable 
+ 
 ### search your data
- - the server.py script provides a simple web search using grep within the svn working directory.
+ - the server.py script provides a web API to SVN based on starlette
+ - the search frontend is based on jquery
