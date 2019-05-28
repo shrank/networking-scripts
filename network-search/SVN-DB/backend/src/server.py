@@ -1,30 +1,38 @@
 from starlette.applications import Starlette
-from starlette.responses import JSONResponse, PlainTextResponse
+from starlette.responses import JSONResponse, PlainTextResponse, RedirectResponse
 import SVN
 import os
 import json
+frontend=False
+try:
+	if(os.environ['SVNDB_FRONTEND'].lower() in ["yes","true"]):
+		frontend=True
+except:
+	frontend=False
 
 
 svnDB = Starlette(debug=False)
 
-@svnDB.route('/')
-async def homepage(request):
-    return JSONResponse({'hello': 'world'})
+if(frontend):
+	from starlette.staticfiles import StaticFiles
+	svnDB.mount('/html', StaticFiles(directory="html"))
+	@svnDB.route('/')
+	async def homepage(request):
+		response = RedirectResponse(url='/html/search.html')
 
-
-@svnDB.route('/store/{collection}/{object_id}')
+@svnDB.route('/api/store/{collection}/{object_id}')
 async def getObject(request):
 	object_id = request.path_params['object_id']
 	collection = request.path_params['collection']
 	result=backend.getFile(collection,object_id)
 	return PlainTextResponse(result)
 
-@svnDB.route('/store/')
+@svnDB.route('/api/store/')
 async	def getCollections(request):
 	a=backend.getCollections()
 	return JSONResponse(a)
 
-@svnDB.route('/search/')
+@svnDB.route('/api/search/')
 async def search(request):
 	result={}
 	args={}
@@ -36,9 +44,15 @@ async def search(request):
 	result=backend.search(args['q'],args["c"])
 	return JSONResponse(result)
 
-backend=SVN.SVNBackend("/srv/workdir",os.environ['SVNREPO'])
+try:
+	repodir=os.environ['SVNREPO']
+except:
+	print("Unabel to get Reository Path form environment variable %SVNREPO")
+	exit(1)
+
+backend=SVN.SVNBackend("/srv/workdir",repodir)
 
 
 if __name__ == '__main__':
 	import uvicorn
-	uvicorn.run(svnDB, host='0.0.0.0', port=8000)
+	uvicorn.run(svnDB, host='0.0.0.0', port=80)

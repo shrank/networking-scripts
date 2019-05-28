@@ -3,16 +3,17 @@
 #
 # @see https://github.com/shrank/networking-scripts
 #
-# Version 0.2
+# Version 0.3
 #
 
 
 # pull base image
-FROM nginx:1.15.12-alpine
+FROM alpine:3.9.3
 
 # Group ID for data files		
 ENV DATA_GID 1
 ENV SVNREPO /data/repo
+ENV SVNDB_FRONTEND YES
 
 MAINTAINER shrank <info@murxs.ch>
 # Port for search frontend
@@ -20,19 +21,11 @@ EXPOSE 80/tcp
 
 RUN apk add --no-cache ansible nmap py3-requests subversion python3 gcc libc-dev python3-dev make && ln -s /usr/bin/python3 /usr/bin/python
 
-RUN pip3 install uvicorn starlette
+RUN pip3 install uvicorn starlette aiofiles
 
-ADD nginx/nginx.conf /etc/nginx/nginx.conf
-RUN rm /etc/nginx/conf.d/*
-
-# add search frontend
-ADD SVN-DB/frontend /srv/SVN-DB/frontend
-RUN cd /srv/SVN-DB/frontend && make
-ADD nginx/frontend.conf /etc/nginx/conf.d/
-
-# add search backend
-ADD SVN-DB/backend/src /srv/SVN-DB/backend
-ADD nginx/backend.conf /etc/nginx/conf.d/
+# add search
+ADD SVN-DB/backend/ /srv/SVN-DB/
+RUN cd /srv/SVN-DB/ && make
 
 # ansible config and modules
 COPY ansible.cfg /etc/ansible/ansible.cfg

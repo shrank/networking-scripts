@@ -7,8 +7,6 @@ chgrp -R $DATA_GID /data/*
 chmod -R g+w /data/*
 find /data/ -type d -exec chmod g+s {} \;
 fi
-/usr/sbin/crond -f -c /data/cron/crontabs -L /data/log/cron.log &
+cd /srv/SVN-DB/src/ && python3.6 server.py &
 
-python3.6 /srv/SVN-DB/backend/server.py &
-
-nginx -g "daemon off;"
+/usr/sbin/crond -f -c /data/cron/crontabs -L /data/log/cron.log 
